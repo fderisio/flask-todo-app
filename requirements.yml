@@ -1,0 +1,6 @@
+name: flask_todo_app
+dependencies:
+  - python=3.6
+  - pip:
+    - Flask==1.0.2
+    - Flask_Migrate==2.2.1
