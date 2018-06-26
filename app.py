@@ -1,12 +1,10 @@
-# import string
-# import random
-
+import string
+import random
 from flask import Flask
 from flask_migrate import Migrate
-# from models import ToDoItem, ToDoList
 from urls import todo_list_api
+from models import ToDoItem, ToDoList
 from views import ToDoListListView,ToDoListGetUpdateDelete
-
 from database import db
 
 app = Flask(__name__)
@@ -18,28 +16,31 @@ db.init_app(app)
 
 # ejecutan las funciones dentro del blueprint todo_list_api, en todos los prefijos que quieras
 app.register_blueprint(todo_list_api, url_prefix='/todo-list')
-app.register_blueprint(todo_list_api, url_prefix='/todo-item')
+# app.register_blueprint(todo_list_api, url_prefix='/todo-item')
 
 
 # Past examples:
+def random_string(l):
+    letter = string.ascii_letters
+    return ''.join(random.choice(letter) for i in range(l))
 
-# def random_string(l):
-#     letter = string.ascii_letters
-#     return ''.join(random.choice(letter) for i in range(l))
 
-# @app.cli.command()
-# def create_dummy_data():
-#     for i in range(10):
-#         new_todo_list = ToDoList(name=f'My new list: {random_string(20)}')
-#         for j in range(10):
-#             new_item = ToDoItem(
-#                 content=f'My new todo item: {random_string(5)}',
-#                 todo_list=new_todo_list
-#             )
-#             db.session.add(new_item)
-#     db.session.commit()
-#
-#
+@app.cli.command()
+def create_dummy_data():
+    for i in range(10):
+        new_todo_list = ToDoList(name=f'My new list: {random_string(20)}')
+        for j in range(10):
+            new_item = ToDoItem(
+                content=f'My new todo item: {random_string(5)}',
+                todo_list=new_todo_list
+            )
+            db.session.add(new_item)
+    db.session.commit()
+
+
+if __name__ == '__main__':
+    app.run(host='localhost', port=8000, debug=True)
+
 # @app.cli.command()
 # def give_word():
 #     print(random_string(10))

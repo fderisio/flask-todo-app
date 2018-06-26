@@ -30,3 +30,11 @@ class ToDoItem(db.Model):
         'ToDoList',
         backref=db.backref('todos', lazy=True)  # si no es lazy da error
     )
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'content': self.content,
+            'created': self.created.strftime('%d, %b, %Y'),
+            'todo_list_id': self.todo_list_id
+        }

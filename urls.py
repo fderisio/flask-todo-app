@@ -10,16 +10,21 @@ todo_list_api.add_url_rule(
 )
 
 todo_list_api.add_url_rule(
+    rule='/<int:todo_list_id>',
+    view_func=ToDoListGetUpdateDelete.as_view('get-items')
+)
+
+todo_list_api.add_url_rule(
     rule='/new',
-    view_func=ToDoListGetUpdateDelete.as_view('get-update-delete-list')
+    view_func=ToDoListGetUpdateDelete.as_view('add-new-list')
 )
 
 todo_list_api.add_url_rule(
-    rule='/update/<todo_list_id>',
-    view_func=ToDoListGetUpdateDelete.as_view('get-update-delete-list')
+    rule='/update/<int:todo_list_id>',
+    view_func=ToDoListGetUpdateDelete.as_view('update-list')
 )
 
 todo_list_api.add_url_rule(
-    rule='/delete/<todo_list_id>',
-    view_func=ToDoListGetUpdateDelete.as_view('get-update-delete-list')
+    rule='/delete/<int:todo_list_id>',
+    view_func=ToDoListGetUpdateDelete.as_view('delete-list')
 )
