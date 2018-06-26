@@ -13,8 +13,7 @@ class ToDoItem(db.Model):
     )
     due_date = db.Column(
         db.DateTime,
-        nullable=True,
-        required=False
+        nullable=True
     )
     done_flag = db.Column(
         db.Boolean,
@@ -23,18 +22,30 @@ class ToDoItem(db.Model):
     )
     todo_list_id = db.Column(
         db.Integer,
-        db.ForeignKey('todo_list.id'),  # Todo_list (table name). id (field)
+        db.ForeignKey('todo_list.id'),  # todo_list (table name). id (field)
         nullable=False
+
     )
     todo_list = db.relationship(
         'ToDoList',
-        backref=db.backref('todos', lazy=True)  # si no es lazy da error
+        backref=db.backref('todos', lazy=True, cascade='all, delete-orphan')  # si no es lazy da error
     )
 
     def serialize(self):
-        return {
-            'id': self.id,
-            'content': self.content,
-            'created': self.created.strftime('%d, %b, %Y'),
-            'todo_list_id': self.todo_list_id
-        }
+        if self.__getattribute__('due_date'):
+            return {
+                'id': self.id,
+                'content': self.content,
+                'created': self.created.strftime('%d, %b, %Y'),
+                'due_date': self.due_date.strftime('%d, %b, %Y'),
+                'done_flag': self.done_flag,
+                'todo_list_id': self.todo_list_id
+            }
+        else:
+            return {
+                'id': self.id,
+                'content': self.content,
+                'created': self.created.strftime('%d, %b, %Y'),
+                'done_flag': self.done_flag,
+                'todo_list_id': self.todo_list_id
+            }

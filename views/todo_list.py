@@ -8,17 +8,19 @@ from models import ToDoList, ToDoItem
 from views.helpers import APIView
 
 
-class ToDoListListView(MethodView):
-    def get(self):
+class ToDoListMixin:
+    def all_lists(self):
         todo_lists = ToDoList.query.all()
         return json.dumps(f'{[l.serialize() for l in todo_lists]}')
 
 
+class ToDoListListView(ToDoListMixin, MethodView):
+    def get(self):
+        return self.all_lists()
 
-class ToDoListGetUpdateDelete(APIView):
+
+class ToDoListGetUpdateDelete(ToDoListMixin, APIView):
     def get(self, **kwargs):
-        data = request.data
-        print(data)
         # self.session  # to update delete or add only
         todo_list_id = kwargs.get('todo_list_id')
         todo_list = ToDoList.query.filter_by(id=todo_list_id).first()
@@ -29,7 +31,9 @@ class ToDoListGetUpdateDelete(APIView):
     def delete(self, **kwargs):
         todo_list_id = kwargs.get('todo_list_id')
         todo_list = ToDoList.query.filter_by(id=todo_list_id).first()
-        return json.dumps(f'{[l.serialize() for l in todo_list]}')
+        self.session.delete(todo_list)
+        self.session.commit()
+        return self.all_lists()
 
     def patch(self, **kwargs):
         todo_list_id = kwargs.get('todo_list_id')
